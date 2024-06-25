@@ -1,0 +1,50 @@
+% Knowledge base
+
+% Symptoms for diseases
+symptom(flu, fever).
+symptom(flu, cough).
+symptom(flu, sore_throat).
+symptom(flu, fatigue).
+
+symptom(common_cold, cough).
+symptom(common_cold, sore_throat).
+symptom(common_cold, runny_nose).
+symptom(common_cold, sneezing).
+
+symptom(covid19, fever).
+symptom(covid19, cough).
+symptom(covid19, shortness_of_breath).
+symptom(covid19, loss_of_taste_or_smell).
+
+symptom(allergy, sneezing).
+symptom(allergy, runny_nose).
+symptom(allergy, itchy_eyes).
+symptom(allergy, rash).
+
+% Diagnosis rules
+diagnose(Disease, Symptoms) :-
+    findall(Symptom, symptom(Disease, Symptom), DiseaseSymptoms),
+    subset(DiseaseSymptoms, Symptoms).
+
+% Helper function to check if all elements of a list are present in another list
+subset([], _).
+subset([H|T], List) :-
+    member(H, List),
+    subset(T, List).
+
+% Test the diagnosis
+test_diagnosis :-
+    Symptoms = [fever, cough, sore_throat],
+    diagnose(Disease, Symptoms),
+    writeln('Possible Disease':Disease).
+
+% Start the diagnosis with user input
+start_diagnosis :-
+    writeln('Enter your symptoms (end with a dot): '),
+    read(Symptoms),
+    findall(Disease, diagnose(Disease, Symptoms), Diseases),
+    (   Diseases = [] 
+    ->  writeln('No diagnosis could be made based on the provided symptoms.')
+    ;   writeln('Possible diseases based on the provided symptoms:'),
+        writeln(Diseases)
+    ).
